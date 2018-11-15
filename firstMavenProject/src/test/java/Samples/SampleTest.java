@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 /**
  * @author Katsiaryna Stalchanka
- * @since
+ * @since 12.11.2018
  */
 public class SampleTest {
 
