@@ -12,10 +12,22 @@ public class Solution {
         System.out.println(new GenerateThread());
     }
 
-    public static class GenerateThread implements Runnable {
-        @Override
-        public void run() {
+    public static class GenerateThread extends Thread {
 
+        public GenerateThread() {
+            super(String.valueOf(++createdThreadCount));
+            start();
+        }
+
+        public String toString() {
+            return String.format("%s created", getName());
+        }
+
+        public void run(){
+            if(createdThreadCount<count){
+                System.out.println(new GenerateThread());
+            }
         }
     }
 }
+
