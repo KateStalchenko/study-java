@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class MinesweeperGame extends Game {
     private static final int SIDE = 9;
 
+    private static final String MINE = "\\uD83D\\uDCA3";
+
     private int countMinesOnField;
 
     private GameObject[][] gameField = new GameObject[SIDE][SIDE];
@@ -24,11 +26,9 @@ public class MinesweeperGame extends Game {
             for (int column = 0; column < SIDE; column++) {
                 if (getRandomNumber(10) < 1) {
                     initializeGameField(row, column, true);
-                    setCellColor(column, row, Color.RED);
                     countMinesOnField++;
                 } else {
                     initializeGameField(row, column, false);
-                    setCellColor(column, row, Color.BEIGE);
                 }
             }
         }
@@ -37,6 +37,7 @@ public class MinesweeperGame extends Game {
 
     private void initializeGameField(int row, int column, boolean isMine) {
         gameField[row][column] = new GameObject(column, row, isMine);
+        setCellColor(column, row, Color.BEIGE);
     }
 
     private void countMineNeighbors() {
@@ -116,5 +117,22 @@ public class MinesweeperGame extends Game {
             neighbors.add(gameField[row + 1][column]);
         }
         return neighbors;
+    }
+
+    private void openTile(int x, int y) {
+        gameField[y][x].isOpen = true;
+
+        if (gameField[y][x].isMine) {
+            setCellValue(x, y, MINE);
+        } else {
+            setCellNumber(x, y, gameField[y][x].countMineNeighbors);
+            setCellColor(x, y, Color.GREEN);
+        }
+    }
+
+    @Override
+    public void onMouseLeftClick(int x, int y) {
+        super.onMouseLeftClick(x, y);
+        openTile(x, y);
     }
 }
