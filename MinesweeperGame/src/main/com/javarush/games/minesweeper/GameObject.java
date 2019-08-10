@@ -1,10 +1,10 @@
-package com.javarush.games.minesweeper;
+package main.com.javarush.games.minesweeper;
 
 public class GameObject {
     public int x;
     public int y;
 
-    public int countMineNeighbors = 0;
+    public int countMineNeighbors;
 
     public boolean isMine;
 
