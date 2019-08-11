@@ -126,6 +126,14 @@ public class MinesweeperGame extends Game {
     }
 
     private void openTile(int x, int y) {
+        if (gameField[y][x].isOpen){
+            return;
+        }
+
+        if (gameField[y][x].isFlag){
+            return;
+        }
+
         if (isGameStopped) {
             return;
         }
