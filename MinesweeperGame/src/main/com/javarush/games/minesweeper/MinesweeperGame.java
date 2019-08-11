@@ -131,10 +131,10 @@ public class MinesweeperGame extends Game {
             setCellNumber(x, y, gameField[y][x].countMineNeighbors);
             setCellColor(x, y, Color.GREEN);
 
-            if (gameField[y][x].countMineNeighbors == 0 /*&& !gameField[y][x].isMine*/){
+            if (gameField[y][x].countMineNeighbors == 0 /*&& !gameField[y][x].isMine*/) {
                 ArrayList<GameObject> neighborsOfCell = getNeighbors(gameField[y][x]);
-                for (GameObject cell: neighborsOfCell){
-                    if (!cell.isOpen){
+                for (GameObject cell : neighborsOfCell) {
+                    if (!cell.isOpen) {
                         openTile(cell.x, cell.y);
                     }
                 }
@@ -143,9 +143,40 @@ public class MinesweeperGame extends Game {
         }
     }
 
+    private void markTile(int x, int y) {
+        if (gameField[y][x].isOpen) {
+            return;
+        }
+        if (countFlags == 0 && !gameField[y][x].isFlag) {
+            return;
+        }
+
+
+        if (!gameField[y][x].isFlag) {
+            gameField[y][x].isFlag = true;
+            countFlags--;
+            setCellValue(x, y, FLAG);
+            setCellColor(x, y, Color.YELLOW);
+            return;
+        }
+
+        if (gameField[y][x].isFlag) {
+            gameField[y][x].isFlag = false;
+            countFlags++;
+            setCellValue(x, y, "");
+            setCellColor(x, y, Color.BEIGE);
+        }
+    }
+
     @Override
     public void onMouseLeftClick(int x, int y) {
         super.onMouseLeftClick(x, y);
         openTile(x, y);
+    }
+
+    @Override
+    public void onMouseRightClick(int x, int y) {
+        super.onMouseRightClick(x, y);
+        markTile(x, y);
     }
 }
