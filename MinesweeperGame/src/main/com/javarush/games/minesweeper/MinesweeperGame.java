@@ -30,7 +30,7 @@ public class MinesweeperGame extends Game {
     private void createGame() {
         for (int row = 0; row < SIDE; row++) {
             for (int column = 0; column < SIDE; column++) {
-                setCellValue(column, row, "");
+                setCellValue(row, column, "");
                 if (getRandomNumber(10) < 1) {
                     initializeGameField(row, column, true);
                     countMinesOnField++;
@@ -53,12 +53,16 @@ public class MinesweeperGame extends Game {
             for (int column = 0; column < SIDE; column++) {
                 if (!gameField[row][column].isMine) {
                     ArrayList<GameObject> neighbors = getNeighbors(gameField[row][column]);
-                    for (GameObject gameObject : neighbors) {
-                        if (gameObject.isMine) {
-                            gameField[row][column].countMineNeighbors++;
-                        }
-                    }
+                    countMineNeighborsForTile(row, column, neighbors);
                 }
+            }
+        }
+    }
+
+    private void countMineNeighborsForTile(int row, int column, ArrayList<GameObject> neighbors) {
+        for (GameObject gameObject : neighbors) {
+            if (gameObject.isMine) {
+                gameField[row][column].countMineNeighbors++;
             }
         }
     }
@@ -128,62 +132,70 @@ public class MinesweeperGame extends Game {
     }
 
     private void openTile(int x, int y) {
-        if (gameField[y][x].isOpen || gameField[y][x].isFlag || isGameStopped) {
-            return;
-        }
+        if (!gameField[y][x].isOpen || !gameField[y][x].isFlag || !isGameStopped) {
 
-        gameField[y][x].isOpen = true;
-        countClosedTiles--;
+            if (gameField[y][x].isMine) {
+                setCellValue(x, y, MINE);
+                setCellValueEx(x, y, Color.RED, MINE);
+                gameOver();
+                return;
+            }
 
-        if (gameField[y][x].isMine) {
-            setCellValue(x, y, MINE);
-            setCellValueEx(x, y, Color.RED, MINE);
-            gameOver();
-        } else {
+            gameField[y][x].isOpen = true;
+            setCellNumber(x, y, gameField[y][x].countMineNeighbors);
+            setCellColor(x, y, Color.GREEN);
+            countClosedTiles--;
+
             score = score + 5;
             setScore(score);
+
             if (countClosedTiles == countMinesOnField) {
                 win();
             }
 
-            setCellNumber(x, y, gameField[y][x].countMineNeighbors);
-            setCellColor(x, y, Color.GREEN);
-
             if (gameField[y][x].countMineNeighbors == 0) {
-                ArrayList<GameObject> neighborsOfCell = getNeighbors(gameField[y][x]);
-                for (GameObject cell : neighborsOfCell) {
-                    if (!cell.isOpen) {
-                        openTile(cell.x, cell.y);
-                    }
-                }
-                setCellValue(x, y, "");
+                openTilesUntilTilesWithMineNeighbor(x, y);
+            }
+
+        }
+    }
+
+    private void openTilesUntilTilesWithMineNeighbor(int x, int y) {
+        ArrayList<GameObject> neighborsOfCell = getNeighbors(gameField[y][x]);
+        for (GameObject cell : neighborsOfCell) {
+            if (!cell.isOpen) {
+                openTile(cell.x, cell.y);
+            }
+        }
+        setCellValue(x, y, "");
+    }
+
+    private void markTile(int x, int y) {
+        if (!gameField[y][x].isOpen || (countFlags != 0 && gameField[y][x].isFlag)) {
+
+            if (!gameField[y][x].isFlag) {
+                setFlagMarker(x, y);
+                return;
+            }
+
+            if (gameField[y][x].isFlag) {
+                unsetFlagMarker(x, y);
             }
         }
     }
 
-    private void markTile(int x, int y) {
-        if (gameField[y][x].isOpen) {
-            return;
-        }
-        if (countFlags == 0 && !gameField[y][x].isFlag) {
-            return;
-        }
+    private void unsetFlagMarker(int x, int y) {
+        gameField[y][x].isFlag = false;
+        countFlags++;
+        setCellValue(x, y, "");
+        setCellColor(x, y, Color.BEIGE);
+    }
 
-
-        if (!gameField[y][x].isFlag) {
-            gameField[y][x].isFlag = true;
-            countFlags--;
-            setCellValue(x, y, FLAG);
-            setCellColor(x, y, Color.YELLOW);
-            return;
-        }
-
-        if (gameField[y][x].isFlag) {
-            gameField[y][x].isFlag = false;
-            countFlags++;
-            setCellValue(x, y, "");
-            setCellColor(x, y, Color.BEIGE);
-        }
+    private void setFlagMarker(int x, int y) {
+        gameField[y][x].isFlag = true;
+        countFlags--;
+        setCellValue(x, y, FLAG);
+        setCellColor(x, y, Color.YELLOW);
     }
 
     private void gameOver() {
