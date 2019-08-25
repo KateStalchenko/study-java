@@ -62,13 +62,13 @@ class Snake {
         }
     }
 
-    private boolean isSnakeAlive(GameObject gameObject) {
+    private boolean isSnakeAlive(GameObject snakeObject) {
         boolean isSnakeAlive = true;
-        if (gameObject.x < 0 || gameObject.y < 0 || gameObject.x >= SnakeGame.WIDTH || gameObject.y >= SnakeGame.HEIGHT) {
+        if (snakeObject.x < 0 || snakeObject.y < 0 || snakeObject.x >= SnakeGame.WIDTH || snakeObject.y >= SnakeGame.HEIGHT) {
             isSnakeAlive = false;
         }
 
-        if (checkCollision(gameObject)) {
+        if (checkCollision(snakeObject)) {
             isSnakeAlive = false;
         }
 
@@ -96,9 +96,9 @@ class Snake {
         snakeParts.remove(snakeParts.size() - 1);
     }
 
-    boolean checkCollision(GameObject gameObject) {
+    boolean checkCollision(GameObject snakeObject) {
         for (GameObject snakePart : snakeParts) {
-            if (gameObject.x == snakePart.x && gameObject.y == snakePart.y) {
+            if (snakeObject.x == snakePart.x && snakeObject.y == snakePart.y) {
                 return true;
             }
         }
