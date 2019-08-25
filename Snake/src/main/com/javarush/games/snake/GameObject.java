@@ -1,10 +1,10 @@
 package main.com.javarush.games.snake;
 
-public class GameObject {
-    public int x;
-    public int y;
+class GameObject {
+    int x;
+    int y;
 
-    public GameObject(int x, int y) {
+    GameObject(int x, int y) {
         this.x = x;
         this.y = y;
     }

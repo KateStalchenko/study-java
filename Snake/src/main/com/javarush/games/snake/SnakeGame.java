@@ -3,8 +3,8 @@ package main.com.javarush.games.snake;
 import com.javarush.engine.cell.*;
 
 public class SnakeGame extends Game {
-    public static final int WIDTH = 15;
-    public static final int HEIGHT = 15;
+    static final int WIDTH = 15;
+    static final int HEIGHT = 15;
     private static final int GOAL = 28;
 
     private Snake snake;
@@ -25,22 +25,32 @@ public class SnakeGame extends Game {
     @Override
     public void onTurn(int step) {
         snake.move(apple);
-        if (!apple.isAlive) {
+
+        if (!apple.getIsAlive()) {
             createNewApple();
-            score += 5;
-            setScore(score);
-            turnDelay -= 10;
-            setTurnTimer(turnDelay);
+            modifyScore(5);
+            modifyDelay(10);
         }
 
-        if (!snake.isAlive) {
+        if (!snake.getIsAlive()) {
             gameOver();
         }
 
         if (snake.getLength() > GOAL) {
             win();
         }
+
         drawScene();
+    }
+
+    private void modifyDelay(int delayToModify) {
+        turnDelay -= delayToModify;
+        setTurnTimer(turnDelay);
+    }
+
+    private void modifyScore(int scoreToModify) {
+        score += scoreToModify;
+        setScore(score);
     }
 
     @Override
@@ -69,11 +79,16 @@ public class SnakeGame extends Game {
     private void createGame() {
         score = 0;
         setScore(score);
+
         turnDelay = 300;
         setTurnTimer(turnDelay);
+
         snake = new Snake(WIDTH / 2, HEIGHT / 2);
+
         createNewApple();
+
         isGameStopped = false;
+
         drawScene();
     }
 
